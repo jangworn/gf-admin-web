@@ -25,10 +25,20 @@ export default {
   methods: {
     sendReply() {
       this.$socket.emit('reply', {
-        openid: this.currentConversationId,
+        uid: this.currentConversationId,
         content: window.btoa(window.encodeURIComponent(this.answer))
       })
+      this.$store.dispatch('sendMessage', {
+        uid: this.currentConversationId,
+        content: this.answer
+      })
       this.answer = ''
+      setTimeout(() => {
+        this.oContent = document.querySelector(
+          '.msg_scroll .el-scrollbar__wrap'
+        )
+        this.oContent.scrollTop = this.oContent.scrollHeight
+      }, 0)
     }
   }
 }

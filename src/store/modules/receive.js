@@ -20,10 +20,10 @@ const receive = {
 
   },
   mutations: {
-    INIT_DATA(state, data) {
+    initData(state, data) {
       state.conversationList = []
       state.currentConversation = []
-      if (data.conversation.length > 0) {
+      if (data.conversation && data.conversation.length > 0) {
         data.conversation.forEach(function(item) {
           const currentConversationItem = {
             uid: item.uid,
@@ -54,19 +54,19 @@ const receive = {
             messages: []
           }
           state.queueList.push(currentConversation_w)
+          console.log(state.queueList)
         })
       }
     },
     // 发送消息
-    SEND_MESSAGE(state, data) {
-      const currentConversation = state.conversationList.find(item => item.id === state.currentcurrentConversationId || item.id === data.openid)
+    sendReply(state, data) {
+      const currentConversation = state.conversationList.find(item => item.id === state.currentcurrentConversationId || item.id === data.uid)
 
       if (currentConversation && currentConversation.messages) {
         currentConversation.messages.push({
           content: data.content,
           date: new Date(),
-          self: true,
-          from_name: data.name
+          self: true
         })
       }
     },
@@ -93,9 +93,9 @@ const receive = {
       // //console.log(state.currentConversation)
     },
 
-    SET_CONTENT(state, data) {
-      if (data.openid) {
-        const currentConversation = state.conversationList.find(item => item.uid === data.openid)
+    setContent(state, data) {
+      if (data.uid) {
+        const currentConversation = state.conversationList.find(item => item.uid === data.uid)
         if (currentConversation) {
           currentConversation.user.msg = data.content.substr(0, 4) + '...'
           currentConversation.user.time = new Date()
@@ -112,9 +112,9 @@ const receive = {
           })
         } else {
           state.conversationList.push({
-            uid: data.openid,
+            uid: data.uid,
             user: {
-              name: data.nickname && data.nickname !== '1' ? data.nickname : data.openid,
+              name: data.nickname && data.nickname !== '1' ? data.nickname : data.uid,
               img: data.img && data.img !== '1' ? data.img : userimg,
               msg: data.content.substr(0, 4) + '...',
               time: new Date()
@@ -173,7 +173,7 @@ const receive = {
     }) {
       return new Promise((resolve, reject) => {
         getConversationList().then(response => {
-          commit('INIT_DATA', response.data)
+          commit('initData', response.data)
           resolve()
         }).catch(error => {
           reject(error)
@@ -185,12 +185,7 @@ const receive = {
       commit
     }, data) {
       return new Promise((resolve, reject) => {
-        send_msg(data.openid, data.content).then(response => {
-          commit('SEND_MESSAGE', data)
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        commit('sendReply', data)
       })
     },
 
@@ -215,7 +210,7 @@ const receive = {
     setContent({
       commit
     }, value) {
-      commit('SET_CONTENT', value)
+      commit('setContent', value)
     }
 
   }
