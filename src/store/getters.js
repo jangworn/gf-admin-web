@@ -8,6 +8,7 @@ const getters = {
   conversationList: state => state.receive.conversationList,
   currentConversationId: state => state.receive.currentConversationId,
   queueList: state => state.receive.queueList,
-  queue_count: state => state.receive.queue_count
+  conversationCount: state => state.receive.conversationCount,
+  queueCount: state => state.receive.queueCount
 }
 export default getters

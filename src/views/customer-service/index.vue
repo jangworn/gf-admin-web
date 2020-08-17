@@ -1,21 +1,21 @@
 <template>
   <div class="app-container">
     <el-tabs id="tabs" type="border-card">
-      <el-tab-pane label="0人待回复">
+      <el-tab-pane :label="conversationTab">
         <el-row class="conversation-box">
           <el-col :span="6">
             <left />
           </el-col>
           <el-col :span="18">
             <div class="chat">
-              <header />
+              <headerBox />
               <message />
               <inputBox />
             </div>
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane label="0人待接入" class="tag-padding">
+      <el-tab-pane :label="queueTab" class="tag-padding">
         <queueList />
       </el-tab-pane>
       <el-tab-pane label="设置" class="tag-padding">设置</el-tab-pane>
@@ -26,25 +26,31 @@
 <script>
 import left from './left/list'
 import message from './right/message'
+import headerBox from './right/header'
 import inputBox from './right/inputBox'
 import queueList from './queueList'
 import { mapGetters } from 'vuex'
 export default {
   components: {
-    left, message, inputBox, queueList
+    left, message, headerBox, inputBox, queueList
   },
 
   data() {
     return {
-
+      conversationTab: '',
+      queueTab: ''
     }
   },
-
+  computed: {
+    ...mapGetters(['queueCount', 'conversationCount'])
+  },
   created() {
     this.$store.dispatch('initData')
   },
   mounted() {
     this.$socket.emit('kfSignIn', { id: '123' })
+    this.conversationTab = this.conversationCount + '人待回复'
+    this.queueTab = this.queueCount + '人待接入'
   },
 
   sockets: {

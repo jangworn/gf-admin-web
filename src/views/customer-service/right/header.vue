@@ -1,26 +1,43 @@
 <template>
-  <div class="chat_header" data-reactid=".0.5.1.0.2.0.0">
-    <div class="chat_header_items" data-reactid=".0.5.1.0.2.0.0.0">
-      <span class="chat_header_name" data-reactid=".0.5.1.0.2.0.0.0.0">Johnyn</span>
-      <div class="chat_header_icons" data-reactid=".0.5.1.0.2.0.0.0.1">
-        <span class="chat_header_icon transfer" style data-reactid=".0.5.1.0.2.0.0.0.1.0" />
-        <span
-          id="close_session"
-          class="chat_header_icon exit"
-          style
-          data-reactid=".0.5.1.0.2.0.0.0.1.1"
-        />
-        <a
-          class="tip tip_top"
-          style="position: fixed; left: 897.5px; top: 206.719px; display: none;"
-          data-reactid=".0.5.1.0.2.0.0.0.1.2"
-        >结束会话</a>
+  <div class="chat_header">
+    <div class="chat_header_items">
+      <div v-if="currentConversationId" class="chat_header_right">
+        <el-button type="text" @click="endConversation">结束会话</el-button>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
+  data() {
+    return {
 
+    }
+  },
+  computed: {
+    ...mapGetters(['currentConversationId'])
+  },
+  methods: {
+    endConversation() {
+      this.$store.dispatch('endConversation', this.currentConversationId)
+      this.$socket.emit('endConversation', this.currentConversationId)
+    }
+  }
 }
 </script>
+<style lang="scss" scoped>
+.chat_header{
+
+  height:40px;
+  border-bottom:1px solid #dcdcdc;
+}
+.chat_header_items{
+  position: relative;
+}
+.chat_header_right{
+  width:50px;
+  position:absolute;
+  right:10px;
+}
+</style>

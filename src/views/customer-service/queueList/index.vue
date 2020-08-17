@@ -46,6 +46,14 @@ export default {
 
     }
 
+  },
+  sockets: {
+    queueCount: function(msg) {
+      this.$store.dispatch('setQueueCount')
+    },
+    enterQueue: function(msg) {
+      this.$store.dispatch('enterQueue', msg)
+    }
   }
 
 }

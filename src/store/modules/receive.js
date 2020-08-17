@@ -1,6 +1,5 @@
 
 import {
-  endConversation,
   getConversationList,
   getConversationMessage
 } from '@/api/receive'
@@ -13,7 +12,9 @@ const receive = {
     },
     // 会话列表
     conversationList: [],
+    conversationCount: 0,
     queueList: [],
+    queueCount: 0,
     currentConversation: [],
     currentConversationId: '',
     content: ''
@@ -38,9 +39,10 @@ const receive = {
           }
           state.conversationList.push(currentConversationItem)
         })
+        state.conversationCount = state.conversationList.length
       }
       state.queueList = []
-      if (data.queue.length > 0) {
+      if (data.queue && data.queue.length > 0) {
         data.queue.forEach(function(item) {
           const currentConversation_w = {
 
@@ -54,8 +56,9 @@ const receive = {
             messages: []
           }
           state.queueList.push(currentConversation_w)
-          console.log(state.queueList)
         })
+        state.queueCount = state.queueList.length
+        console.log(state.queueCount)
       }
     },
     // 发送消息
@@ -86,7 +89,6 @@ const receive = {
           from_name: s.sender
         })
       })
-      console.log(state.currentConversation)
       if (state.currentConversation.user.time !== '已结束') {
         state.kf_action = true
       }
@@ -149,12 +151,14 @@ const receive = {
     },
 
     endConversation(state, id) {
-      if (id == state.currentConversation.id) {
+      console.log('结束：' + id)
+      if (id === state.currentConversation.id) {
         state.kf_action = false
         state.currentConversation = []
+        state.currentConversationId = false
       }
       state.conversationList.forEach(function(item, index) {
-        if (item.id == id) {
+        if (item.id === id) {
           state.conversationList.splice(index, 1)
           if (state.currentConversation.length > 0) {
             state.currentConversation.user.time = '已结束'
@@ -164,8 +168,40 @@ const receive = {
     },
     initSetting(state, data) {
       state.setting = data
+    },
+    setQueueCount(state, data) {
+      state.queueCount = data
+    },
+    enterQueue(state, data) {
+      const q = state.queueList.find(item => item.id === data.uid)
+      if (q) {
+        q.user.msg = data.content.substr(0, 4) + '...'
+        q.user.time = new Date()
+        q.new_msg = 1
+        q.messages.push({
+          content: data.content,
+          date: new Date(),
+          self: false
+        })
+      } else {
+        state.queueList.push({
+          id: data.uid,
+          user: {
+            name: data.uid,
+            img: userimg,
+            msg: data.content.substr(0, 4) + '...',
+            time: new Date()
+          },
+          new_msg: 0,
+          messages: [{
+            content: data.content,
+            date: new Date(),
+            self: false
+          }
+          ]
+        })
+      }
     }
-
   },
   actions: {
     initData({
@@ -206,11 +242,26 @@ const receive = {
         })
       })
     },
-
     setContent({
       commit
     }, value) {
       commit('setContent', value)
+    },
+    setQueueCount({
+      commit
+    }, value) {
+      commit('setQueueCount', value)
+    },
+    enterQueue({
+      commit
+    }, data) {
+      commit('enterQueue', data)
+    },
+    endConversation({
+      commit
+    }, data) {
+      console.log('结束111')
+      commit('endConversation', data)
     }
 
   }
