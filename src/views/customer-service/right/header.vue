@@ -20,8 +20,8 @@ export default {
   },
   methods: {
     endConversation() {
-      this.$store.dispatch('endConversation', this.currentConversationId)
       this.$socket.emit('endConversation', this.currentConversationId)
+      this.$store.dispatch('endConversation', this.currentConversationId)
     }
   }
 }

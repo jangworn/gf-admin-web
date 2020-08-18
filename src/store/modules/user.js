@@ -1,12 +1,13 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
-
+var jwtDecode = require('jwt-decode')
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    kfId: ''
   }
 }
 
@@ -24,6 +25,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_ID: (state, id) => {
+    state.kfId = id
   }
 }
 
@@ -34,7 +38,11 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         commit('SET_TOKEN', response.token)
+        const jwt = jwtDecode(response.token)
+        commit('SET_ID', jwt.kfId)
+        console.log(jwt)
         setToken(response.token)
+
         resolve()
       }).catch(error => {
         console.log(333)

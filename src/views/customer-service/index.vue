@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-tabs id="tabs" type="border-card">
-      <el-tab-pane :label="conversationTab">
+      <el-tab-pane :label="conversationTabTitle">
         <el-row class="conversation-box">
           <el-col :span="6">
             <left />
@@ -15,7 +15,7 @@
           </el-col>
         </el-row>
       </el-tab-pane>
-      <el-tab-pane :label="queueTab" class="tag-padding">
+      <el-tab-pane :label="queueTabTitle" class="tag-padding">
         <queueList />
       </el-tab-pane>
       <el-tab-pane label="设置" class="tag-padding">设置</el-tab-pane>
@@ -42,15 +42,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['queueCount', 'conversationCount'])
+    ...mapGetters(['queueTabTitle', 'conversationTabTitle', 'kfId'])
   },
   created() {
     this.$store.dispatch('initData')
   },
   mounted() {
-    this.$socket.emit('kfSignIn', { id: '123' })
-    this.conversationTab = this.conversationCount + '人待回复'
-    this.queueTab = this.queueCount + '人待接入'
+    this.$socket.emit('kfSignIn', { id: this.kfId })
   },
 
   sockets: {

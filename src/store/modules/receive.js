@@ -12,9 +12,9 @@ const receive = {
     },
     // 会话列表
     conversationList: [],
-    conversationCount: 0,
+    conversationTabTitle: '0人待回复',
     queueList: [],
-    queueCount: 0,
+    queueTabTitle: '0人待接入',
     currentConversation: [],
     currentConversationId: '',
     content: ''
@@ -39,7 +39,7 @@ const receive = {
           }
           state.conversationList.push(currentConversationItem)
         })
-        state.conversationCount = state.conversationList.length
+        state.conversationTabTitle = state.conversationList.length + '人待回复'
       }
       state.queueList = []
       if (data.queue && data.queue.length > 0) {
@@ -57,13 +57,12 @@ const receive = {
           }
           state.queueList.push(currentConversation_w)
         })
-        state.queueCount = state.queueList.length
-        console.log(state.queueCount)
+        state.queueTabTitle = state.queueList.length + '人待接入'
       }
     },
     // 发送消息
     sendReply(state, data) {
-      const currentConversation = state.conversationList.find(item => item.id === state.currentcurrentConversationId || item.id === data.uid)
+      const currentConversation = state.conversationList.find(item => item.uid === state.currentcurrentConversationId || item.uid === data.uid)
 
       if (currentConversation && currentConversation.messages) {
         currentConversation.messages.push({
@@ -130,7 +129,7 @@ const receive = {
           })
         }
       } else {
-        const currentConversation = state.conversationList.find(item => item.id === state.currentcurrentConversationId)
+        const currentConversation = state.conversationList.find(item => item.uid === state.currentcurrentConversationId)
         currentConversation.messages.push({
           content: data.content,
           date: new Date(),
@@ -151,29 +150,32 @@ const receive = {
     },
 
     endConversation(state, id) {
-      console.log('结束：' + id)
-      if (id === state.currentConversation.id) {
+      console.log(state.currentConversation)
+      if (id === state.currentConversation.uid) {
         state.kf_action = false
         state.currentConversation = []
         state.currentConversationId = false
       }
       state.conversationList.forEach(function(item, index) {
-        if (item.id === id) {
+        if (item.uid === id) {
           state.conversationList.splice(index, 1)
           if (state.currentConversation.length > 0) {
             state.currentConversation.user.time = '已结束'
           }
         }
       })
+      console.log(state.conversationList.length)
+      state.conversationTabTitle = state.conversationList.length + '人待接入'
     },
     initSetting(state, data) {
       state.setting = data
     },
     setQueueCount(state, data) {
-      state.queueCount = data
+      state.queueTabTitle = data + '人待接入'
     },
     enterQueue(state, data) {
-      const q = state.queueList.find(item => item.id === data.uid)
+      console.log(data)
+      const q = state.queueList.find(item => item.uid === data.uid)
       if (q) {
         q.user.msg = data.content.substr(0, 4) + '...'
         q.user.time = new Date()
@@ -185,7 +187,7 @@ const receive = {
         })
       } else {
         state.queueList.push({
-          id: data.uid,
+          uid: data.uid,
           user: {
             name: data.uid,
             img: userimg,
@@ -201,6 +203,28 @@ const receive = {
           ]
         })
       }
+      state.queueTabTitle = state.queueList.length + '人待接入'
+    },
+    deleteQueueOne(state, data) {
+      state.queueList.forEach(function(item, index) {
+        if (item.uid === data.uid) {
+          state.queueList.splice(index, 1)
+        }
+      })
+    },
+    newConversation(state, data) {
+      const currentConversationItem = {
+        uid: data.uid,
+        user: {
+          name: data.uid,
+          img: data.avatar && data.avatar !== '1' ? data.avatar : userimg,
+          msg: data.lastest_msg ? data.lastest_msg.substr(0, 4) + '...' : '',
+          time: data.time ? data.time : new Date()
+        },
+        messages: [],
+        new_msg: data.num
+      }
+      state.conversationList.push(currentConversationItem)
     }
   },
   actions: {
@@ -262,6 +286,16 @@ const receive = {
     }, data) {
       console.log('结束111')
       commit('endConversation', data)
+    },
+    deleteQueueOne({
+      commit
+    }, data) {
+      commit('deleteQueueOne', data)
+    },
+    newConversation({
+      commit
+    }, data) {
+      commit('newConversation', data)
     }
 
   }

@@ -34,14 +34,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['queueList'])
+    ...mapGetters(['queueList', 'kfId'])
   },
   methods: {
-
     receive(uid) {
-      this.$socket.emit('receive', { uid: uid, kf_id: this.kf_id })
+      console.log('kfid:' + this.kfId)
+      this.$socket.emit('receive', { uid: uid, kfId: this.kfId })
     },
-
     handleSelectionChange() {
 
     }
@@ -49,10 +48,19 @@ export default {
   },
   sockets: {
     queueCount: function(msg) {
-      this.$store.dispatch('setQueueCount')
+      console.log('设置排队人数', msg)
+      this.$store.dispatch('setQueueCount', msg)
     },
     enterQueue: function(msg) {
+      console.log('进入队列', msg)
       this.$store.dispatch('enterQueue', msg)
+    },
+    deleteQueueOne: function(msg) {
+      console.log('排队删除接入的客户')
+      this.$store.dispatch('deleteQueueOne', msg)
+    },
+    newConversation: function(msg) {
+      this.$store.dispatch('newConversation', msg)
     }
   }
 

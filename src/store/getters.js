@@ -3,12 +3,13 @@ const getters = {
   device: state => state.app.device,
   token: state => state.user.token,
   avatar: state => state.user.avatar,
+  kfId: state => state.user.kfId,
   name: state => state.user.name,
   currentConversation: state => state.receive.currentConversation,
   conversationList: state => state.receive.conversationList,
   currentConversationId: state => state.receive.currentConversationId,
   queueList: state => state.receive.queueList,
-  conversationCount: state => state.receive.conversationCount,
-  queueCount: state => state.receive.queueCount
+  conversationTabTitle: state => state.receive.conversationTabTitle,
+  queueTabTitle: state => state.receive.queueTabTitle
 }
 export default getters
