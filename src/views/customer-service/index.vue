@@ -30,6 +30,7 @@ import headerBox from './right/header'
 import inputBox from './right/inputBox'
 import queueList from './queueList'
 import { mapGetters } from 'vuex'
+import Cookies from 'js-cookie'
 export default {
   components: {
     left, message, headerBox, inputBox, queueList
@@ -42,13 +43,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['queueTabTitle', 'conversationTabTitle', 'kfId'])
+    ...mapGetters(['queueTabTitle', 'conversationTabTitle'])
   },
   created() {
     this.$store.dispatch('initData')
   },
   mounted() {
-    this.$socket.emit('kfSignIn', { id: this.kfId })
+    this.$socket.emit('kfSignIn', { id: Cookies.get('kfId') })
+    console.log('kfid', Cookies.get('kfId'))
   },
 
   sockets: {

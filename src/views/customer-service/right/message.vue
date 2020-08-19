@@ -1,12 +1,12 @@
 <template>
   <div class="scroll-wrapper chat_body scrollbar-macosx" style="position: relative;height:600px;">
-    <el-scrollbar ref="elscrollbar" v-scroll-list="{page:this.page}" class="msg_scroll">
+    <el-scrollbar ref="elscrollbar" v-scroll-list="{page:page}" class="msg_scroll">
       <div class="message">
         <div
           v-if="currentConversation && currentConversation.messages && conversationList.length>0"
         >
           <div
-            v-scroll-bottom="{scroll:this.scroll_to_bottom,messages:currentConversation.messages}"
+            v-scroll-bottom="{scroll:scroll_to_bottom,messages:currentConversation.messages}"
             class="scroll_content"
           >
             <p class="more">
@@ -96,7 +96,7 @@ export default {
     // 将日期过滤为 hour:minutes
     time(date) {
       if (typeof date === 'string') {
-        if (date.indexOf('T') == -1 && date.indexOf('Z') == -1) {
+        if (date.indexOf('T') === -1 && date.indexOf('Z') === -1) {
           return date
         }
         date = new Date(date)
@@ -110,7 +110,9 @@ export default {
       if (abc.test(str)) {
         try {
           var a = window.atob(str)
-        } catch (err) {}
+        } catch (err) {
+          console.log(err)
+        }
       }
       var reg = /^[0-9]+_[0-9]*$/
       if (a && reg.test(a)) {
@@ -122,6 +124,7 @@ export default {
   },
   sockets: {
     putQuestion: function(msg) {
+      console.log('发送给kf:', msg)
       this.$store.dispatch('setContent', msg)
     }
   },

@@ -27,6 +27,7 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import Cookies from 'js-cookie'
 export default {
   data() {
     return {
@@ -34,12 +35,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['queueList', 'kfId'])
+    ...mapGetters(['queueList'])
   },
   methods: {
     receive(uid) {
-      console.log('kfid:' + this.kfId)
-      this.$socket.emit('receive', { uid: uid, kfId: this.kfId })
+      this.$socket.emit('receive', { uid: uid, kfId: Cookies.get('kfId') })
     },
     handleSelectionChange() {
 
@@ -60,6 +60,7 @@ export default {
       this.$store.dispatch('deleteQueueOne', msg)
     },
     newConversation: function(msg) {
+      console.log('新会话')
       this.$store.dispatch('newConversation', msg)
     }
   }

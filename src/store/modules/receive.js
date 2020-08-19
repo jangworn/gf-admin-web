@@ -95,6 +95,7 @@ const receive = {
     },
 
     setContent(state, data) {
+      data.content = window.decodeURIComponent(data.content)
       if (data.uid) {
         const currentConversation = state.conversationList.find(item => item.uid === data.uid)
         if (currentConversation) {
@@ -225,6 +226,7 @@ const receive = {
         new_msg: data.num
       }
       state.conversationList.push(currentConversationItem)
+      state.conversationTabTitle = state.conversationList.length + '人待回复'
     }
   },
   actions: {
