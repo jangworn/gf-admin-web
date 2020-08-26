@@ -7,6 +7,13 @@ export function login(data) {
     data
   })
 }
+export function logout(token) {
+  return request({
+    url: '/user/checkToken',
+    method: 'get',
+    params: { token }
+  })
+}
 
 export function getInfo(token) {
   return request({

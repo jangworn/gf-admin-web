@@ -30,11 +30,15 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 Vue.use(new VueSocketIO({
-
   debug: true,
-
-  connection: 'http://localhost:8000' //
-
+  connection: 'http://localhost:8199',
+  options: {
+    transport: ['websocket'],
+    autoConnect: true,
+    query: {
+      auth: '1'
+    }
+  }
 }))
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
