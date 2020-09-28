@@ -33,11 +33,8 @@ Vue.use(new VueSocketIO({
   debug: true,
   connection: 'http://localhost:8199',
   options: {
-    transport: ['websocket'],
-    autoConnect: true,
-    query: {
-      auth: '1'
-    }
+    transports: ['websocket'],
+    autoConnect: true
   }
 }))
 // set ElementUI lang to EN
