@@ -102,6 +102,19 @@ export const constantRoutes = [
     ]
 
   },
+  {
+    path: '/client',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Client',
+        component: () => import('@/views/client/index'),
+        meta: { title: '用户管理', icon: 'table' }
+      }
+    ]
+
+  },
   /*  {
     path: '/nested',
     component: Layout,
